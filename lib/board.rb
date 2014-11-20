@@ -112,7 +112,6 @@ class Board
     true
   end
 
-
   def setup_grid
     # white: 5,6,7
     5.upto(7) do |row|
