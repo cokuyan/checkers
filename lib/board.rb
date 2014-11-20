@@ -29,17 +29,21 @@ class Board
 
   # add a rescue to look for trace path
   def [](pos)
-    raise OffBoardError unless pos.all? { |i| i.between?(0, 7) }
+    raise OffBoardError unless on_board?(pos)
 
     x, y = pos
     @grid[x][y]
   end
 
   def []=(pos, piece)
-    raise OffBoardError unless pos.all? { |i| i.between?(0, 7) }
+    raise OffBoardError unless on_board?(pos)
 
     x, y = pos
     @grid[x][y] = piece
+  end
+
+  def on_board?(pos)
+    pos.all? { |i| i.between?(0, 7) }
   end
 
   def perform_moves(move_sequence)

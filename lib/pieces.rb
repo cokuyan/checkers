@@ -11,23 +11,10 @@ end
 
 class Piece
 
-  # may remove later
-  # iterate over it twice for king positions also
-  DELTAS = [
-    [1, 1],
-    [1, -1]
-  ]
-
   attr_reader :pos, :color, :deltas
 
   def initialize(board, color, pos)
     @board, @color, @pos = board, color, pos
-    @deltas = if @color == :white
-                DELTAS.map { |row| [row.first * -1, row.last] }
-              else
-                DELTAS
-              end
-
 
     board.place_piece(self, @pos)
     @promoted = false
@@ -39,30 +26,13 @@ class Piece
     new_piece
   end
 
-  def move_diffs
-    if promoted?
-      @deltas += @deltas.map{ |row| [row.first * -1, row.last] }
-    else
-      @deltas
-    end
-  end
-
-  def moves(move)
-    move_diffs
-    multiplier = move == :slide ? 1 : 2
-    x, y = pos
-    moves = @deltas.map { |dx, dy| [x + dx * multiplier, y + dy * multiplier] }
-    moves.select { |x, y| x.between?(0,7) && y.between?(0,7) }
-  end
-
   def valid_moves
     all_moves = moves(:slide) + moves(:jump)
     all_moves.select { |move| perform_slide(move) || perform_jump(move) }
   end
 
   def perform_slide(slide_pos)
-    return false unless moves(:slide).include?(slide_pos) &&
-                        @board[slide_pos].nil?
+    return false unless valid_slide_pos?(slide_pos)
 
     @board.remove_piece(pos)
     @pos = slide_pos
@@ -72,13 +42,8 @@ class Piece
   end
 
   def perform_jump(jump_pos)
-    adjacent_pos = [(pos.first + jump_pos.first) / 2,
-                    (pos.last + jump_pos.last) / 2]
-
-    return false unless moves(:jump).include?(jump_pos) &&
-                        @board[adjacent_pos] &&
-                        @board[jump_pos].nil? &&
-                        @board[adjacent_pos].color != self.color
+    return false unless valid_jump_pos?(jump_pos)
+    adjacent_pos = adjacent_pos(jump_pos)
 
     @board.remove_piece(pos)
     @board.remove_piece(adjacent_pos)
@@ -86,6 +51,47 @@ class Piece
     @pos = jump_pos
     promote if promotable? && !promoted?
     true
+  end
+
+  def render
+    symbol = promoted? ? "🅚 " : "⬤ "
+    symbol.colorize(color)
+  end
+
+  
+  private
+
+  def moves(move)
+    multiplier = move == :slide ? 1 : 2
+    x, y = pos
+    moves = move_diffs.map do |dx, dy|
+      [x + dx * multiplier, y + dy * multiplier]
+    end
+    moves.select { |move| move.on_board? }
+  end
+
+  def move_diffs
+    diffs = [[1, 1], [1, -1]]
+    diffs += diffs.map{ |row| [row.first * -1, row.last] } if promoted?
+    diffs.map! { |row| [row.first * -1, row.last] } if color == :white
+    diffs
+  end
+
+  def adjacent_pos(jump_pos)
+    [(pos.first + jump_pos.first) / 2, (pos.last + jump_pos.last) / 2]
+  end
+
+  def valid_slide_pos?(slide_pos)
+    moves(:slide).include?(slide_pos) && @board[slide_pos].nil?
+  end
+
+  def valid_jump_pos?(jump_pos)
+    adjacent_pos = adjacent_pos(jump_pos)
+
+    moves(:jump).include?(jump_pos) &&
+    @board[adjacent_pos] &&
+    @board[jump_pos].nil? &&
+    @board[adjacent_pos].color != self.color
   end
 
   def promote
@@ -98,14 +104,7 @@ class Piece
 
   def promotable?
     row = pos.first
-
     color == :white ? row == 0 : row == 7
-  end
-
-  def render
-    symbol = promoted? ? "🅚 " : "⬤ "
-
-    symbol.colorize(color)
   end
 
 end
