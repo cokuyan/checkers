@@ -35,32 +35,6 @@ class Board
     perform_moves!(move_sequence)
   end
 
-  def valid_move_seq?(move_sequence)
-    test_board = self.dup
-    begin
-      test_board.perform_moves!(move_sequence)
-    rescue InvalidMoveSequenceError
-      return false
-    end
-    true
-  end
-
-  # move sequence is an array of moves, each move is an array of positions
-  def perform_moves!(move_sequence)
-    raise NoMovesGivenError if move_sequence.empty?
-    move_sequence.each_with_index do |move, i|
-      from_pos = move.first
-      to_pos   = move.last
-      piece = self[from_pos]
-
-      slid = piece.perform_slide(to_pos) if i.zero?
-      if !i.zero? || (i.zero? && !slid)
-        jumped = piece.perform_jump(to_pos)
-      end
-      raise InvalidMoveSequenceError unless slid || jumped
-    end
-  end
-
   def place_piece(piece, pos)
     self[pos] = piece
   end
@@ -74,10 +48,6 @@ class Board
     test_board.pieces.none? { |piece| piece.color == color } ||
     test_board.pieces.select { |piece| piece.color == color }
                        .all? { |piece| piece.valid_moves.empty? }
-  end
-
-  def pieces
-    @grid.flatten.reject(&:nil?)
   end
 
   def dup
@@ -105,6 +75,38 @@ class Board
       " #{(8 - i)}"
     end.join("\n") +
     "\n  ＡＢＣＤＥＦＧＨ"
+  end
+
+
+  private
+
+  def valid_move_seq?(move_sequence)
+    test_board = self.dup
+    begin
+      test_board.perform_moves!(move_sequence)
+    rescue InvalidMoveSequenceError
+      return false
+    end
+    true
+  end
+
+  def perform_moves!(move_sequence)
+    raise NoMovesGivenError if move_sequence.empty?
+    move_sequence.each_with_index do |move, i|
+      from_pos = move.first
+      to_pos   = move.last
+      piece = self[from_pos]
+
+      slid = piece.perform_slide(to_pos) if i.zero?
+      if !i.zero? || (i.zero? && !slid)
+        jumped = piece.perform_jump(to_pos)
+      end
+      raise InvalidMoveSequenceError unless slid || jumped
+    end
+  end
+
+  def pieces
+    @grid.flatten.reject(&:nil?)
   end
 
   def setup_grid

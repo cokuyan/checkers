@@ -26,6 +26,9 @@ class Game
     puts "#{@players.last.color.to_s.capitalize} won!"
   end
 
+
+  private
+  
   def save
     print "Enter filename: "
     filename = gets.chomp
@@ -54,6 +57,9 @@ class HumanPlayer
     moves << input
     get_subsequent_moves(moves)
   end
+
+
+  private
 
   def get_first_move
     puts "Enter piece, 'save' to save, or 'quit' to quit"
