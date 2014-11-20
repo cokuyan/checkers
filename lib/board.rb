@@ -4,10 +4,10 @@ class Board
     Array.new(8) { Array.new(8) }
   end
 
-  def initialize
+  def initialize(setup = true)
     @grid = Board.create_board
 
-    setup_grid
+    setup_grid if setup
   end
 
   def [](pos)
@@ -23,6 +23,31 @@ class Board
     x, y = pos
     @grid[x][y] = piece
   end
+
+  def perform_moves!(move_sequence)
+  end
+
+
+
+  def dup
+    test_board = Board.new(false)
+
+    @grid.each_index do |row|
+      @grid[row].each_with_index do |piece, col|
+        pos = [row,col]
+        piece = self[pos]
+        test_board = piece ? piece.dup : nil
+      end
+    end
+
+    test_board
+  end
+
+
+
+
+
+
 
   def setup_grid
     # white: 5,6,7

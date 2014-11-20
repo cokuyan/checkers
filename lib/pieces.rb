@@ -22,6 +22,12 @@ class Piece
     @promoted = false
   end
 
+  def dup(board)
+    new_piece = Piece.new(board, color, pos)
+    new_piece.promote if promoted?
+    new_piece
+  end
+
   def move_diffs
     if promoted?
       DELTAS + DELTAS.map{ |row| [row.first * -1, row.last] }
