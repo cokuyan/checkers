@@ -1,3 +1,4 @@
+require 'yaml'
 require_relative 'board.rb'
 
 class CheckersError < StandardError
@@ -20,16 +21,24 @@ class Game
     until @board.lost?(@players.first.color)
       begin
         move_sequence = @players.first.get_move_sequence(@board)
-        @board.perform_moves(move_sequence)
+        case move_sequence
+        when :save then save; redo
+        when :quit then return
+        else @board.perform_moves(move_sequence)
+        end
       rescue CheckersError => e
         puts e.message
         retry
       end
-
       @players.rotate!
     end
-
     puts "#{@players.last.color.to_s.capitalize} won!"
+  end
+
+  def save
+    print "Enter filename: "
+    filename = gets.chomp
+    File.open(filename, 'w') { |file| file.write(self.to_yaml) }
   end
 
 end
@@ -48,17 +57,21 @@ class HumanPlayer
     moves = []
     puts board.render
     puts "#{color.to_s.capitalize}'s turn"
-    moves << get_first_move
+    input = get_first_move
+    return input if input.is_a?(Symbol)
 
+    moves << input
     get_subsequent_moves(moves)
   end
 
   def get_first_move
-    puts "Which piece would you like to move?"
-    start = gets.chomp.split(",").map(&:to_i)
+    puts "Enter piece, 'save' to save, or 'quit' to quit"
+    input = gets.chomp
+    return input.to_sym if input == "save" || input == "quit"
+
+    start = input.split(",").map(&:to_i)
     raise InvalidPieceError unless @board[start] &&
                                    @board[start].color == self.color
-
     puts "Where would you like to move it?"
     next_pos = gets.chomp.split(",").map(&:to_i)
 

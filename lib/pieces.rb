@@ -58,7 +58,7 @@ class Piece
     symbol.colorize(color)
   end
 
-  
+
   private
 
   def moves(move)
@@ -67,7 +67,7 @@ class Piece
     moves = move_diffs.map do |dx, dy|
       [x + dx * multiplier, y + dy * multiplier]
     end
-    moves.select { |move| move.on_board? }
+    moves.select { |move| @board.on_board?(move) }
   end
 
   def move_diffs
