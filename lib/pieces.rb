@@ -43,10 +43,8 @@ class Piece
 
   def moves(move)
     move_diffs
-    moves = []
     multiplier = move == :slide ? 1 : 2
     x, y = pos
-
     @deltas.map { |dx, dy| [x + dx * multiplier, y + dy * multiplier] }
   end
 
