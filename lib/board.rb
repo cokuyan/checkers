@@ -1,3 +1,4 @@
+# encoding: utf-8
 require_relative 'pieces.rb'
 
 class Board
@@ -94,12 +95,16 @@ class Board
   end
 
   def render
+    "  ＡＢＣＤＥＦＧＨ\n" +
     @grid.map.with_index do |row, i|
+      "#{(8 - i)} " +
       row.map.with_index do |piece, j|
         space = piece ? piece.render : "  "
         (i + j).odd? ? space.on_light_black : space
-      end.join
-    end
+      end.join +
+      " #{(8 - i)}"
+    end.join("\n") +
+    "\n  ＡＢＣＤＥＦＧＨ"
   end
 
   def setup_grid

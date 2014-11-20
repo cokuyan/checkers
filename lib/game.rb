@@ -60,11 +60,11 @@ class HumanPlayer
     input = gets.chomp
     return input.to_sym if input == "save" || input == "quit"
 
-    start = input.split(",").map(&:to_i)
+    start = convert(input)
     raise InvalidPieceError unless @board[start] &&
                                    @board[start].color == self.color
     puts "Where would you like to move it?"
-    next_pos = gets.chomp.split(",").map(&:to_i)
+    next_pos = convert(gets.chomp)
 
     [start, next_pos]
   end
@@ -75,8 +75,7 @@ class HumanPlayer
     puts "Where would you like to move it?"
     while (input = gets.chomp)
       break if input == ""
-      next_pos = input.split(",").map(&:to_i)
-      move = [moves.last.last, next_pos]
+      move = [moves.last.last, convert(input)]
       moves << move
 
       puts "Next move"
@@ -84,6 +83,14 @@ class HumanPlayer
     end
 
     moves
+  end
+
+  def convert(input)
+    position = input.split("")
+    first = position[0].ord - 'a'.ord
+    second = 8 - Integer(position[1])
+
+    [second, first]
   end
 
 end
