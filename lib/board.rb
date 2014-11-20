@@ -4,9 +4,15 @@ class CheckersError < StandardError
 end
 
 class InvalidMoveSequenceError < CheckersError
+  def message
+    "Invalid Move Sequence"
+  end
 end
 
 class NoMovesGivenError < CheckersError
+  def message
+    "No moves were given"
+  end
 end
 
 class Board

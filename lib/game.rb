@@ -4,6 +4,9 @@ class CheckersError < StandardError
 end
 
 class InvalidPieceError < CheckersError
+  def message
+    "Please choose a position with your piece on it"
+  end
 end
 
 class Game
@@ -22,7 +25,7 @@ class Game
         puts e.message
         retry
       end
-      
+
       @players.rotate!
     end
 

@@ -2,7 +2,11 @@
 require_relative 'board.rb' #just in case
 
 class CheckersError < StandardError; end
-class InvalidMoveError < CheckersError; end
+class InvalidMoveError < CheckersError
+  def message
+    "Invalid Move"
+  end
+end
 
 class Piece
 
