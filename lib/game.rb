@@ -28,7 +28,7 @@ class Game
 
 
   private
-  
+
   def save
     print "Enter filename: "
     filename = gets.chomp
@@ -93,7 +93,7 @@ class HumanPlayer
 
   def convert(input)
     position = input.split("")
-    first = position[0].ord - 'a'.ord
+    first = position[0].downcase.ord - 'a'.ord
     second = 8 - Integer(position[1])
 
     [second, first]
