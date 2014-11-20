@@ -9,15 +9,31 @@ class Piece
 
   attr_reader :pos, :color
 
-  def intialize(board, pos, color)
-    @board, @pos, @color = board, pos, color
+  def initialize(board, color, pos)
+    @board, @color, @pos = board, color, pos
+    @deltas = if @color == :red
+                DELTAS.map { |row| [row.first * -1, row.last] }
+              else
+                DELTAS
+              end
+
 
     board.place_piece(self, @pos)
     @promoted = false
   end
 
+  def move_diffs
+    if promoted?
+      DELTAS + DELTAS.map{ |row| [row.first * -1, row.last] }
+    else
+      DELTAS
+    end
+  end
 
   def perform_slide(slide_pos)
+    slide_pos.each_index do |i|
+      raise InvalidMoveError unless (slide_pos[i] - pos[i]).abs == 1
+    end
     return false unless @board[slide_pos].nil?
     @board.remove_piece(pos)
     @pos = slide_pos ##### Put this into board class?
@@ -28,6 +44,9 @@ class Piece
   end
 
   def perform_jump(jump_pos)
+    slide_pos.each_index do |i|
+      raise InvalidMoveError unless (slide_pos[i] - pos[i]).abs == 2
+    end
     adjacent_pos = [(pos.first + jump_pos.first) / 2,
                     (pos.last + jump_pos.last) / 2]
 
