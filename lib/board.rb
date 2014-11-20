@@ -37,7 +37,11 @@ class Board
   end
 
   def perform_moves(move_sequence)
-    perform_moves!(move_sequence) if valid_move_seq?(move_sequence)
+    if valid_move_seq?(move_sequence)
+      perform_moves!(move_sequence)
+    else
+      raise InvalidMoveSequenceError
+    end
   end
 
   def valid_move_seq?(move_sequence)
@@ -55,16 +59,15 @@ class Board
   def perform_moves!(move_sequence)
     raise NoMovesGivenError if move_sequence.empty?
     piece = self[move_sequence.first.first]
-    move_sequence.each do |move|
+    move_sequence.each_with_index do |move, i|
       from_pos = move.first
       to_pos   = move.last
       piece = self[from_pos]
-      begin
-        slid = piece.perform_slide(to_pos)
-    rescue InvalidMoveError
+
+      slid = piece.perform_slide(to_pos) if i.zero?
+      if !i.zero? || (i.zero? && !slid)
         jumped = piece.perform_jump(to_pos)
       end
-
       raise InvalidMoveSequenceError unless slid || jumped
     end
 
@@ -78,8 +81,11 @@ class Board
     self[pos] = nil
   end
 
-  def done?
-    pieces.all? { |piece| pieces.first.color == piece.color }
+  def lost?(color)
+    test_board = self.dup
+    test_board.pieces.none? { |piece| piece.color == color } ||
+    test_board.pieces.select { |piece| piece.color == color }
+                       .all? { |piece| piece.valid_moves.empty? }
   end
 
   def pieces
