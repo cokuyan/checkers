@@ -29,7 +29,7 @@ class Game
       @players.rotate!
     end
 
-    #winning message
+    puts "#{@players.last.color.to_s.capitalize} won!"
   end
 
 end
@@ -74,7 +74,7 @@ class HumanPlayer
       next_pos = input.split(",").map(&:to_i)
       move = [moves.last.last, next_pos]
       moves << move
-      
+
       puts "Next move"
       puts "<enter> to stop"
     end
