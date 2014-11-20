@@ -78,16 +78,10 @@ class Board
   end
 
 
-  private
+  protected
 
-  def valid_move_seq?(move_sequence)
-    test_board = self.dup
-    begin
-      test_board.perform_moves!(move_sequence)
-    rescue InvalidMoveSequenceError
-      return false
-    end
-    true
+  def pieces
+    @grid.flatten.reject(&:nil?)
   end
 
   def perform_moves!(move_sequence)
@@ -105,9 +99,19 @@ class Board
     end
   end
 
-  def pieces
-    @grid.flatten.reject(&:nil?)
+
+  private
+
+  def valid_move_seq?(move_sequence)
+    test_board = self.dup
+    begin
+      test_board.perform_moves!(move_sequence)
+    rescue InvalidMoveSequenceError
+      return false
+    end
+    true
   end
+
 
   def setup_grid
     # white: 5,6,7
