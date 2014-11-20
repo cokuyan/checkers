@@ -1,13 +1,9 @@
 # encoding: utf-8
 require 'colorize'
-require_relative 'board.rb' #just in case
+require_relative 'errors.rb'
 
 class CheckersError < StandardError; end
-class InvalidMoveError < CheckersError
-  def message
-    "Invalid Move"
-  end
-end
+
 
 class Piece
 

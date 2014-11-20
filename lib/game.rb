@@ -1,15 +1,6 @@
 require 'yaml'
 require_relative 'board.rb'
 
-class CheckersError < StandardError
-end
-
-class InvalidPieceError < CheckersError
-  def message
-    "Please choose a position with your piece on it"
-  end
-end
-
 class Game
 
   def initialize(red, white)
