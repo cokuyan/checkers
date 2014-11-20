@@ -6,6 +6,9 @@ end
 class InvalidMoveSequenceError < CheckersError
 end
 
+class NoMovesGivenError < CheckersError
+end
+
 class Board
 
   def self.create_board
@@ -18,6 +21,7 @@ class Board
     setup_grid if setup
   end
 
+  # add a rescue to look for trace path
   def [](pos)
     raise OffBoardError unless pos.all? { |i| i.between?(0, 7) }
 
@@ -49,7 +53,7 @@ class Board
 
   # move sequence is an array of moves, each move is an array of positions
   def perform_moves!(move_sequence)
-    # raise if move_sequence.empty?
+    raise NoMovesGivenError if move_sequence.empty?
     piece = self[move_sequence.first.first]
     move_sequence.each do |move|
       from_pos = move.first
@@ -74,6 +78,14 @@ class Board
     self[pos] = nil
   end
 
+  def done?
+    pieces.all? { |piece| pieces.first.color == piece.color }
+  end
+
+  def pieces
+    @grid.flatten.reject(&:nil?)
+  end
+
   def dup
     test_board = Board.new(false)
 
@@ -81,7 +93,7 @@ class Board
       @grid[row].each_with_index do |piece, col|
         pos = [row,col]
         piece = self[pos]
-        test_board = piece ? piece.dup : nil
+        test_board[pos] = piece ? piece.dup(test_board) : nil
       end
     end
 
