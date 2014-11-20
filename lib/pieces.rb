@@ -1,6 +1,6 @@
 require_relative 'board.rb' #just in case
 
-class InvalidMoveError; end
+class InvalidMoveError < CheckersError; end
 
 class Piece
 
@@ -54,8 +54,8 @@ class Piece
   end
 
   def perform_jump(jump_pos)
-    slide_pos.each_index do |i|
-      raise InvalidMoveError unless (slide_pos[i] - pos[i]).abs == 2
+    jump_pos.each_index do |i|
+      raise InvalidMoveError unless (jump_pos[i] - pos[i]).abs == 2
     end
     adjacent_pos = [(pos.first + jump_pos.first) / 2,
                     (pos.last + jump_pos.last) / 2]

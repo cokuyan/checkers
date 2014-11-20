@@ -1,7 +1,10 @@
 require_relative 'pieces.rb'
 
-class CheckersError; end
-class InvalidMoveError; end
+class CheckersError < StandardError
+end
+
+class InvalidMoveSequenceError < CheckersError
+end
 
 class Board
 
@@ -33,19 +36,19 @@ class Board
   def perform_moves!(move_sequence)
     # raise if move_sequence.empty?
     piece = self[move_sequence.first.first]
-    # try sliding first
-    if move_sequence.size == 1
-      from_pos = move_sequence.first.first # use this to assign piece?
-      to_pos   = move_sequence.first.last
-      raise InvalidMoveSequence unless piece.perform_slide(to_pos)
-    # if not a slide, then must be jump
-    else
-      move_sequence.each do |move|
-        from_pos = move.first # use this to assign piece?
-        to_pos   = move.last
-        raise InvalidMoveSequence unless piece.perform_jump(to_pos)
+    move_sequence.each do |move|
+      from_pos = move.first # use this to assign piece? ###YES
+      to_pos   = move.last
+      piece = self[from_pos]
+      begin
+        slid = piece.perform_slide(to_pos)
+    rescue InvalidMoveError
+        jumped = piece.perform_jump(to_pos)
       end
+
+      raise InvalidMoveSequenceError unless slid || jumped
     end
+
   end
 
   def place_piece(piece, pos)
