@@ -2,9 +2,6 @@
 require 'colorize'
 require_relative 'errors.rb'
 
-class CheckersError < StandardError; end
-
-
 class Piece
 
   attr_reader :pos, :color, :deltas
