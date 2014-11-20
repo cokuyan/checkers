@@ -61,6 +61,7 @@ class HumanPlayer
 
     puts "Where would you like to move it?"
     next_pos = gets.chomp.split(",").map(&:to_i)
+
     [start, next_pos]
   end
 
@@ -73,6 +74,7 @@ class HumanPlayer
       next_pos = input.split(",").map(&:to_i)
       move = [moves.last.last, next_pos]
       moves << move
+      
       puts "Next move"
       puts "<enter> to stop"
     end

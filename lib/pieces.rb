@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'colorize'
 require_relative 'board.rb' #just in case
 
 class CheckersError < StandardError; end
@@ -40,7 +41,7 @@ class Piece
 
   def move_diffs
     if promoted?
-      @deltas + @deltas.map{ |row| [row.first * -1, row.last] }
+      @deltas += @deltas.map{ |row| [row.first * -1, row.last] }
     else
       @deltas
     end
@@ -102,9 +103,9 @@ class Piece
   end
 
   def render
-    color == :white ? "w" : "r"
-    # not promoted: ◯, with colorize
-    # promoted: Ⓚ
+    symbol = promoted? ? "🅚 " : "⬤ "
+
+    symbol.colorize(color)
   end
 
 end

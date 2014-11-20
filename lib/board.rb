@@ -113,9 +113,10 @@ class Board
   end
 
   def render
-    @grid.map do |row|
-      row.map do |piece|
-        piece ? piece.render : " "
+    @grid.map.with_index do |row, i|
+      row.map.with_index do |piece, j|
+        space = piece ? piece.render : "  "
+        (i + j).odd? ? space.on_light_black : space
       end.join
     end
   end
