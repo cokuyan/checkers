@@ -1,9 +1,13 @@
+require_relative 'board.rb' #just in case
+
+class InvalidMoveError; end
+
 class Piece
 
   # may remove later
   # iterate over it twice for king positions also
   DELTAS = [
-    [1, 1]
+    [1, 1],
     [1, -1]
   ]
 
@@ -78,6 +82,10 @@ class Piece
     row = pos.first
 
     color == :white ? row == 7 : row == 0
+  end
+
+  def render
+    color == :white ? "w" : "r"
   end
 
 end

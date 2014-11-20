@@ -1,3 +1,8 @@
+require_relative 'pieces.rb'
+
+class CheckersError; end
+class InvalidMoveError; end
+
 class Board
 
   def self.create_board
@@ -24,10 +29,32 @@ class Board
     @grid[x][y] = piece
   end
 
+  # move sequence is an array of moves, each move is an array of positions
   def perform_moves!(move_sequence)
+    # raise if move_sequence.empty?
+    piece = self[move_sequence.first.first]
+    # try sliding first
+    if move_sequence.size == 1
+      from_pos = move_sequence.first.first # use this to assign piece?
+      to_pos   = move_sequence.first.last
+      raise InvalidMoveSequence unless piece.perform_slide(to_pos)
+    # if not a slide, then must be jump
+    else
+      move_sequence.each do |move|
+        from_pos = move.first # use this to assign piece?
+        to_pos   = move.last
+        raise InvalidMoveSequence unless piece.perform_jump(to_pos)
+      end
+    end
   end
 
+  def place_piece(piece, pos)
+    self[pos] = piece
+  end
 
+  def remove_piece(pos)
+    self[pos] = nil
+  end
 
   def dup
     test_board = Board.new(false)
@@ -43,7 +70,13 @@ class Board
     test_board
   end
 
-
+  def render
+    @grid.map do |row|
+      row.map do |piece|
+        piece ? piece.render : " "
+      end.join
+    end
+  end
 
 
 
