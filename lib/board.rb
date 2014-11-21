@@ -65,7 +65,7 @@ class Board
   end
 
   def render
-    "  ＡＢＣＤＥＦＧＨ\n" +
+    "   A B C D E F G H\n" +
     @grid.map.with_index do |row, i|
       "#{(8 - i)} " +
       row.map.with_index do |piece, j|
@@ -74,7 +74,7 @@ class Board
       end.join +
       " #{(8 - i)}"
     end.join("\n") +
-    "\n  ＡＢＣＤＥＦＧＨ"
+    "\n   A B C D E F G H"
   end
 
 

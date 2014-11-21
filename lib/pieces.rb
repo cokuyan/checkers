@@ -87,6 +87,8 @@ class Piece
     @board[adjacent_pos].color != self.color
   end
 
+  protected
+
   def promote
     @promoted = true
   end
