@@ -81,7 +81,7 @@ class Board
   protected
 
   def pieces
-    @grid.flatten.reject(&:nil?)
+    @grid.flatten.compact
   end
 
   def perform_moves!(move_sequence)
